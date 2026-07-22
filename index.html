@@ -45,12 +45,13 @@
       "@context": "https://schema.org",
       "@graph": [
         {
-          "@type": "LocalBusiness",
+          "@type": ["ElectronicsRepairShop", "LocalBusiness"],
           "@id": "https://www.displaycellpros.com/#organization",
           "name": "Display & Cell Pros LLC",
           "alternateName": "Display & Cell Pros",
           "url": "https://www.displaycellpros.com/",
           "logo": "https://www.displaycellpros.com/favicon.svg",
+          "image": "https://www.displaycellpros.com/favicon.svg",
           "description": "Spokane's premier mobile technical device repair laboratory. Professional on-site screen renewals, battery replacements, micro-soldering, and B2B hardware diagnostics in Spokane, WA. Combat-veteran owned, Right-to-Repair compliant.",
           "telephone": "+1-509-555-0199",
           "priceRange": "$$",
@@ -79,8 +80,54 @@
             {
               "@type": "City",
               "name": "Liberty Lake"
+            },
+            {
+              "@type": "City",
+              "name": "Cheney"
+            },
+            {
+              "@type": "City",
+              "name": "Post Falls"
             }
           ],
+          "hasOfferCatalog": {
+            "@type": "OfferCatalog",
+            "name": "Spokane Cell & Hardware Repair Services",
+            "itemListElement": [
+              {
+                "@type": "Offer",
+                "itemOffered": {
+                  "@type": "Service",
+                  "name": "OLED & Screen Refurbishment",
+                  "description": "Precision display glass and digitizer renewals in Spokane, WA."
+                }
+              },
+              {
+                "@type": "Offer",
+                "itemOffered": {
+                  "@type": "Service",
+                  "name": "Mobile Battery Cell Swap",
+                  "description": "High-capacity battery replacement with power rail diagnostics."
+                }
+              },
+              {
+                "@type": "Offer",
+                "itemOffered": {
+                  "@type": "Service",
+                  "name": "Micro-Soldering & Logic Board Triage",
+                  "description": "Component-level SMD rework and thermal camera trace diagnostics."
+                }
+              },
+              {
+                "@type": "Offer",
+                "itemOffered": {
+                  "@type": "Service",
+                  "name": "B2B Mobile Fleet Maintenance",
+                  "description": "Commercial mobile equipment overhaul and preventive maintenance for Spokane enterprises."
+                }
+              }
+            ]
+          },
           "openingHoursSpecification": [
             {
               "@type": "OpeningHoursSpecification",
