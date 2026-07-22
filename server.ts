@@ -1004,10 +1004,14 @@ app.get("/api/movies/:id", async (req, res) => {
 
 // GET /sitemap.xml
 app.get("/sitemap.xml", (req, res) => {
+  const rootSitemap = path.join(process.cwd(), "sitemap.xml");
   const publicSitemap = path.join(process.cwd(), "public", "sitemap.xml");
   const distSitemap = path.join(process.cwd(), "dist", "sitemap.xml");
   
-  if (fs.existsSync(publicSitemap)) {
+  if (fs.existsSync(rootSitemap)) {
+    res.header("Content-Type", "application/xml");
+    return res.sendFile(rootSitemap);
+  } else if (fs.existsSync(publicSitemap)) {
     res.header("Content-Type", "application/xml");
     return res.sendFile(publicSitemap);
   } else if (fs.existsSync(distSitemap)) {
@@ -1036,10 +1040,22 @@ app.get("/sitemap.xml", (req, res) => {
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://www.displaycellpros.com/store</loc>
+    <lastmod>2026-07-22</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://www.displaycellpros.com/privacy</loc>
     <lastmod>2026-07-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://www.displaycellpros.com/lab</loc>
+    <lastmod>2026-07-22</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
   </url>
   <url>
     <loc>https://www.displaycellpros.com/competitor-benchmarks</loc>
