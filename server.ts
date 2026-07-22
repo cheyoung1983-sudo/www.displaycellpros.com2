@@ -1072,6 +1072,7 @@ app.get("/robots.txt", (req, res) => {
   res.header("Content-Type", "text/plain");
   return res.send(`User-agent: *
 Allow: /
+Disallow: /api/
 
 Sitemap: https://www.displaycellpros.com/sitemap.xml`);
 });
