@@ -479,16 +479,24 @@ export const UsbSimulator: React.FC<UsbSimulatorProps> = ({ onDeviceDetected, on
 
           {/* Progress bar */}
           {connectionState !== "DISCONNECTED" && connectionState !== "ONLINE" && connectionState !== "FAULT" && (
-            <div className="space-y-1 font-mono">
+            <div className="space-y-1.5 font-mono">
               <div className="flex justify-between items-center text-[8.5px]">
-                <span className="text-yellow-400 font-bold animate-pulse">NEGOTIATING PHYSICAL HANDSHAKE...</span>
-                <span className="text-slate-400">{progress}%</span>
+                <span className="text-yellow-400 font-bold animate-pulse flex items-center gap-1">
+                  <span className="relative flex h-1.5 w-1.5">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-yellow-500"></span>
+                  </span>
+                  NEGOTIATING PHYSICAL HANDSHAKE...
+                </span>
+                <span className="text-slate-400 font-bold">{progress}%</span>
               </div>
-              <div className="w-full bg-slate-900 rounded-full h-1 overflow-hidden border border-slate-850">
+              <div className="relative w-full bg-slate-900 rounded-full h-2 overflow-hidden border border-slate-850 shadow-inner">
                 <div 
-                  className="bg-gradient-to-r from-blue-600 to-teal-400 h-full transition-all duration-300"
+                  className="bg-gradient-to-r from-blue-600 via-teal-400 to-emerald-400 h-full rounded-full transition-all duration-500 ease-out relative overflow-hidden animate-scan-pulse"
                   style={{ width: `${progress}%` }}
-                ></div>
+                >
+                  <div className="absolute inset-0 animate-scan-shimmer pointer-events-none"></div>
+                </div>
               </div>
             </div>
           )}

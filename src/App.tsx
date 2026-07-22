@@ -1738,24 +1738,35 @@ Status: ${issueType === "battery" ? "DEGRADED" : "OPTIMAL"}`;
 
                       {isScanning && (
                         <div className={`mt-3 bg-slate-950 border rounded-lg p-3 font-mono text-[10px] text-emerald-400 leading-tight space-y-2.5 shadow-inner transition-all duration-500 ${
-                          scanProgress >= 90 ? "border-amber-500/40 shadow-[0_0_12px_rgba(245,158,11,0.15)] animate-pulse" : "border-slate-800"
+                          scanProgress >= 90 ? "border-amber-500/50 shadow-[0_0_15px_rgba(245,158,11,0.2)] animate-scan-pulse-amber" : "border-slate-800 shadow-[0_0_12px_rgba(16,185,129,0.15)]"
                         }`}>
                           <div className="flex items-center justify-between">
-                            <span className={`font-extrabold text-[8.5px] uppercase tracking-widest transition-colors duration-500 ${scanProgress >= 90 ? "text-amber-400 animate-pulse" : "text-slate-400"}`}>
+                            <span className={`font-extrabold text-[8.5px] uppercase tracking-widest transition-colors duration-500 flex items-center gap-1.5 ${scanProgress >= 90 ? "text-amber-400 animate-pulse" : "text-slate-400"}`}>
+                              <span className="relative flex h-2 w-2">
+                                <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${scanProgress >= 90 ? "bg-amber-400" : "bg-emerald-400"}`}></span>
+                                <span className={`relative inline-flex rounded-full h-2 w-2 ${scanProgress >= 90 ? "bg-amber-500" : "bg-emerald-500"}`}></span>
+                              </span>
                               {scanProgress >= 90 ? "⚡ FINAL DIAGNOSTIC STEPS" : "HARDWARE PROBE ACTIVE"}
                             </span>
                             <span className={`font-bold animate-pulse transition-colors duration-500 ${scanProgress >= 90 ? "text-amber-400" : "text-blue-400"}`}>{scanProgress}%</span>
                           </div>
-                          <div className="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                          
+                          {/* Outer Track with smooth rounded container */}
+                          <div className="relative w-full bg-slate-900 h-2 rounded-full overflow-hidden border border-slate-800 shadow-inner">
+                            {/* Inner Animated Progress Bar */}
                             <div 
-                              className={`h-full transition-all duration-300 ${
+                              className={`h-full rounded-full transition-all duration-500 ease-out relative overflow-hidden ${
                                 scanProgress >= 90 
-                                  ? "bg-gradient-to-r from-amber-500 to-orange-400 animate-pulse shadow-[0_0_10px_rgba(245,158,11,0.5)]" 
-                                  : "bg-emerald-400"
+                                  ? "bg-gradient-to-r from-amber-500 via-orange-500 to-amber-400 animate-scan-pulse-amber" 
+                                  : "bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-400 animate-scan-pulse"
                               }`}
                               style={{ width: `${scanProgress}%` }}
-                            ></div>
+                            >
+                              {/* Overlaying Shimmer Beam */}
+                              <div className="absolute inset-0 animate-scan-shimmer pointer-events-none"></div>
+                            </div>
                           </div>
+                          
                           <p className="text-slate-350 transition-all text-[9px] leading-snug">{scanStep}</p>
                         </div>
                       )}
