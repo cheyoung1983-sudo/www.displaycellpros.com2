@@ -57,7 +57,7 @@ export function PrivacyPolicyView({ onBackToHome, onNavigateToLab }: PrivacyPoli
           <div className="flex flex-wrap gap-2 pt-2 text-[11px] font-mono">
             <span className="bg-slate-900 border border-slate-800 text-slate-350 px-2.5 py-1 rounded-md flex items-center gap-1">
               <Globe className="w-3.5 h-3.5 text-blue-400" />
-              Verified Domain: displaycellpros.com
+              Verified Domain: {typeof window !== 'undefined' ? window.location.hostname : 'Custom Domain'}
             </span>
             <span className="bg-slate-900 border border-slate-800 text-slate-350 px-2.5 py-1 rounded-md flex items-center gap-1">
               <Server className="w-3.5 h-3.5 text-indigo-400" />
@@ -242,7 +242,7 @@ export function PrivacyPolicyView({ onBackToHome, onNavigateToLab }: PrivacyPoli
                 </h4>
                 <p>
                   At Display & Cell Pros LLC, we respect your privacy and are committed to protecting any personal data 
-                  collected. This Privacy Policy governs your use of displaycellpros.com and the embedded technical lab portal.
+                  collected. This Privacy Policy governs your use of this platform and the embedded technical lab portal.
                 </p>
               </div>
 
@@ -325,8 +325,8 @@ export function PrivacyPolicyView({ onBackToHome, onNavigateToLab }: PrivacyPoli
               Google Trust & Safety Quick-Link
             </h3>
             <p className="text-xs text-slate-300">
-              This page satisfies all OAuth Verification Criteria: it is hosted on our verified custom domain 
-              (<code>displaycellpros.com</code>), describes our app and brand accurately, details requested data purposes transparently, 
+              This page satisfies all OAuth Verification Criteria: it is hosted on our verified custom domain, 
+              describes our app and brand accurately, details requested data purposes transparently, 
               and contains an easily accessible, non-shortened link to our Privacy Policy.
             </p>
             {onBackToHome && (

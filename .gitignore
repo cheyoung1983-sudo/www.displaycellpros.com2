@@ -6,3 +6,9 @@ coverage/
 *.log
 .env*
 !.env.example
+.vercel/
+.next/
+.idea/
+.artifacts/
+.vscode/
+github-mcp-server/

@@ -148,7 +148,6 @@ const B2B_CORPORATE_DOMAINS = [
   "boeing.com",
   "starbucks.com",
   "costco.com",
-  "displaycellpros.com",
   "t-mobile.com",
   "expedia.com",
   "nordstrom.com",
@@ -514,10 +513,10 @@ BEHAVIOR LAWS:
         };
       }
 
-      // OpenAI doesn't have native Google search grounding chunks. Use fallback references or mock
+      const appBaseUrl = process.env.APP_URL || "";
       const groundingSources = [
-        { title: "Spokane Smartphone Repair Standards", url: "https://displaycellpros.com/spokane-device-lab" },
-        { title: "Right-to-Repair Diagnostic Specifications", url: "https://displaycellpros.com/diy-hardware-safety" }
+        { title: "Spokane Smartphone Repair Standards", url: `${appBaseUrl}/spokane-device-lab` },
+        { title: "Right-to-Repair Diagnostic Specifications", url: `${appBaseUrl}/diy-hardware-safety` }
       ];
 
       return res.json({ 
@@ -551,8 +550,8 @@ BEHAVIOR LAWS:
       }
 
       const mockGroundingSources = [
-        { title: "Spokane Smartphone Repair Standards", url: "https://displaycellpros.com/spokane-device-lab" },
-        { title: "Right-to-Repair Diagnostic Specifications", url: "https://displaycellpros.com/diy-hardware-safety" }
+        { title: "Spokane Smartphone Repair Standards", url: `${process.env.APP_URL || ""}/spokane-device-lab` },
+        { title: "Right-to-Repair Diagnostic Specifications", url: `${process.env.APP_URL || ""}/diy-hardware-safety` }
       ];
 
       return res.json({
@@ -584,8 +583,8 @@ BEHAVIOR LAWS:
     }
 
     const mockGroundingSources = [
-      { title: "Spokane Smartphone Repair Standards", url: "https://displaycellpros.com/spokane-device-lab" },
-      { title: "Right-to-Repair Diagnostic Specifications", url: "https://displaycellpros.com/diy-hardware-safety" }
+      { title: "Spokane Smartphone Repair Standards", url: `${process.env.APP_URL || ""}/spokane-device-lab` },
+      { title: "Right-to-Repair Diagnostic Specifications", url: `${process.env.APP_URL || ""}/diy-hardware-safety` }
     ];
 
     setTimeout(() => {
@@ -1000,81 +999,6 @@ app.get("/api/movies/:id", async (req, res) => {
       error: err.message || err,
     });
   }
-});
-
-// GET /sitemap.xml
-app.get("/sitemap.xml", (req, res) => {
-  const rootSitemap = path.join(process.cwd(), "sitemap.xml");
-  const publicSitemap = path.join(process.cwd(), "public", "sitemap.xml");
-  const distSitemap = path.join(process.cwd(), "dist", "sitemap.xml");
-  
-  if (fs.existsSync(rootSitemap)) {
-    res.header("Content-Type", "application/xml");
-    return res.sendFile(rootSitemap);
-  } else if (fs.existsSync(publicSitemap)) {
-    res.header("Content-Type", "application/xml");
-    return res.sendFile(publicSitemap);
-  } else if (fs.existsSync(distSitemap)) {
-    res.header("Content-Type", "application/xml");
-    return res.sendFile(distSitemap);
-  } else {
-    res.header("Content-Type", "application/xml");
-    return res.send(`<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://www.displaycellpros.com/</loc>
-    <lastmod>2026-07-22</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
-    <loc>https://www.displaycellpros.com/services</loc>
-    <lastmod>2026-07-22</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.displaycellpros.com/b2b</loc>
-    <lastmod>2026-07-22</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.displaycellpros.com/store</loc>
-    <lastmod>2026-07-22</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.displaycellpros.com/privacy</loc>
-    <lastmod>2026-07-22</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://www.displaycellpros.com/lab</loc>
-    <lastmod>2026-07-22</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://www.displaycellpros.com/competitor-benchmarks</loc>
-    <lastmod>2026-07-22</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-</urlset>`);
-  }
-});
-
-// GET /robots.txt
-app.get("/robots.txt", (req, res) => {
-  res.header("Content-Type", "text/plain");
-  return res.send(`User-agent: *
-Allow: /
-Disallow: /api/
-
-Sitemap: https://www.displaycellpros.com/sitemap.xml`);
 });
 
 // GET /api/welcome or /welcome to read greeting from Vercel Edge Config

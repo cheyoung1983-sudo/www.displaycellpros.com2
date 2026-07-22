@@ -214,8 +214,29 @@ export default function App() {
   const [isAuthLoading, setIsAuthLoading] = useState<boolean>(false);
   const [isAuthChecking, setIsAuthChecking] = useState<boolean>(() => {
     // Check if an active session flag was set in localStorage to avoid flashing login forms
-    return localStorage.getItem("displaycellpros:hasActiveSession") === "true";
+    return localStorage.getItem("app:hasActiveSession") === "true";
   });
+
+  // Hydrate local mock state or fallback storage
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("app:tickets");
+      if (saved) {
+        setTickets(JSON.parse(saved));
+      }
+    } catch (e) {
+      console.warn("Could not load local tickets:", e);
+    }
+  }, []);
+
+  const saveLocalTickets = (updated: RepairTicket[]) => {
+    setTickets(updated);
+    try {
+      localStorage.setItem("app:tickets", JSON.stringify(updated));
+    } catch (e) {
+      console.warn("Could not save local tickets:", e);
+    }
+  };
 
   // --- MULTI-MODAL & ADVANCED DIAGNOSTIC SUB-MODE STATES ---
   const [diagnosticMode, setDiagnosticMode] = useState<"standard" | "thinking" | "vision">("standard");
@@ -230,7 +251,7 @@ export default function App() {
   const fetchLocalBackupTickets = async (uid: string) => {
     try {
       setLocalBackupError(null);
-      const saved = localStorage.getItem("displaycellpros:tickets");
+      const saved = localStorage.getItem("app:tickets");
       if (saved) {
         const allTickets: RepairTicket[] = JSON.parse(saved);
         setLocalBackupTickets(allTickets.filter((t: RepairTicket) => t.userId === uid));
@@ -261,10 +282,10 @@ export default function App() {
     };
 
     try {
-      const saved = localStorage.getItem("displaycellpros:tickets");
+      const saved = localStorage.getItem("app:tickets");
       const current = saved ? JSON.parse(saved) : [];
       const updated = [newTicket, ...current];
-      localStorage.setItem("displaycellpros:tickets", JSON.stringify(updated));
+      localStorage.setItem("app:tickets", JSON.stringify(updated));
       setTicketCreationSuccess(true);
       setTimeout(() => setTicketCreationSuccess(false), 3000);
       if (authUser) {
@@ -288,10 +309,10 @@ export default function App() {
 
     try {
       setLocalBackupError(null);
-      const saved = localStorage.getItem("displaycellpros:tickets");
+      const saved = localStorage.getItem("app:tickets");
       const current = saved ? JSON.parse(saved) : [];
       const updated = current.filter((t: RepairTicket) => t.id !== ticketId);
-      localStorage.setItem("displaycellpros:tickets", JSON.stringify(updated));
+      localStorage.setItem("app:tickets", JSON.stringify(updated));
       if (authUser) {
         setLocalBackupTickets(updated.filter((t: RepairTicket) => t.userId === authUser.uid));
       } else {
@@ -322,7 +343,7 @@ export default function App() {
     setIsAuthLoading(true);
     setTimeout(() => {
       try {
-        const storedUsersRaw = localStorage.getItem("displaycellpros:registeredUsers");
+        const storedUsersRaw = localStorage.getItem("app:registeredUsers");
         const usersList = storedUsersRaw ? JSON.parse(storedUsersRaw) : [];
         
         if (usersList.some((u: any) => u.email.toLowerCase() === formEmail.toLowerCase())) {
@@ -339,12 +360,12 @@ export default function App() {
         };
 
         usersList.push(newSimUser);
-        localStorage.setItem("displaycellpros:registeredUsers", JSON.stringify(usersList));
+        localStorage.setItem("app:registeredUsers", JSON.stringify(usersList));
 
         const sessionUser = { uid: newSimUser.uid, displayName: newSimUser.displayName, email: newSimUser.email };
         setAuthUser(sessionUser);
-        localStorage.setItem("displaycellpros:simulatedUser", JSON.stringify(sessionUser));
-        localStorage.setItem("displaycellpros:hasActiveSession", "true");
+        localStorage.setItem("app:simulatedUser", JSON.stringify(sessionUser));
+        localStorage.setItem("app:hasActiveSession", "true");
         addToast("Account Created", "Welcome! Your persistent local session is active.", "success", 5000);
         setFormEmail("");
         setFormPassword("");
@@ -366,18 +387,18 @@ export default function App() {
     setIsAuthLoading(true);
     setTimeout(() => {
       try {
-        const storedUsersRaw = localStorage.getItem("displaycellpros:registeredUsers");
+        const storedUsersRaw = localStorage.getItem("app:registeredUsers");
         const defaultUsers = [
           {
             uid: "sim-uid-local-specialist",
             displayName: "Spokane Specialist",
-            email: "specialist@displaycellpros.com",
+            email: "specialist@app.local",
             password: "spokane123"
           }
         ];
         const usersList = storedUsersRaw ? JSON.parse(storedUsersRaw) : defaultUsers;
         if (!storedUsersRaw) {
-          localStorage.setItem("displaycellpros:registeredUsers", JSON.stringify(defaultUsers));
+          localStorage.setItem("app:registeredUsers", JSON.stringify(defaultUsers));
         }
 
         const foundUser = usersList.find((u: any) => u.email.toLowerCase() === formEmail.toLowerCase());
@@ -399,8 +420,8 @@ export default function App() {
           email: foundUser.email
         };
         setAuthUser(sessionUser);
-        localStorage.setItem("displaycellpros:simulatedUser", JSON.stringify(sessionUser));
-        localStorage.setItem("displaycellpros:hasActiveSession", "true");
+        localStorage.setItem("app:simulatedUser", JSON.stringify(sessionUser));
+        localStorage.setItem("app:hasActiveSession", "true");
         addToast("Signed In", `Connected to secure local session: ${formEmail}`, "success", 4000);
         setFormEmail("");
         setFormPassword("");
@@ -419,11 +440,11 @@ export default function App() {
       const simUser = {
         uid: "sim-uid-local-specialist",
         displayName: "Spokane Specialist",
-        email: "specialist@displaycellpros.com"
+        email: "specialist@app.local"
       };
       setAuthUser(simUser);
-      localStorage.setItem("displaycellpros:simulatedUser", JSON.stringify(simUser));
-      localStorage.setItem("displaycellpros:hasActiveSession", "true");
+      localStorage.setItem("app:simulatedUser", JSON.stringify(simUser));
+      localStorage.setItem("app:hasActiveSession", "true");
       addToast("Signed In", "Connected via secure offline credentials bypass.", "success", 4000);
       setIsAuthLoading(false);
     }, 500);
@@ -433,8 +454,8 @@ export default function App() {
     setIsAuthLoading(true);
     setTimeout(() => {
       setAuthUser(null);
-      localStorage.removeItem("displaycellpros:simulatedUser");
-      localStorage.removeItem("displaycellpros:hasActiveSession");
+      localStorage.removeItem("app:simulatedUser");
+      localStorage.removeItem("app:hasActiveSession");
       setLocalBackupTickets([]);
       addToast("Signed Out", "You have successfully signed out of your local session.", "success", 4000);
       setIsAuthLoading(false);
@@ -583,7 +604,7 @@ export default function App() {
           const domain = emailLower.split("@")[1] || "";
           const B2B_DOMAINS = [
             "amazon.com", "microsoft.com", "google.com", "boeing.com",
-            "starbucks.com", "costco.com", "displaycellpros.com",
+            "starbucks.com", "costco.com",
             "t-mobile.com", "expedia.com", "nordstrom.com", "paccar.com"
           ];
           const isCorp = B2B_DOMAINS.includes(domain);
@@ -1738,35 +1759,24 @@ Status: ${issueType === "battery" ? "DEGRADED" : "OPTIMAL"}`;
 
                       {isScanning && (
                         <div className={`mt-3 bg-slate-950 border rounded-lg p-3 font-mono text-[10px] text-emerald-400 leading-tight space-y-2.5 shadow-inner transition-all duration-500 ${
-                          scanProgress >= 90 ? "border-amber-500/50 shadow-[0_0_15px_rgba(245,158,11,0.2)] animate-scan-pulse-amber" : "border-slate-800 shadow-[0_0_12px_rgba(16,185,129,0.15)]"
+                          scanProgress >= 90 ? "border-amber-500/40 shadow-[0_0_12px_rgba(245,158,11,0.15)] animate-pulse" : "border-slate-800"
                         }`}>
                           <div className="flex items-center justify-between">
-                            <span className={`font-extrabold text-[8.5px] uppercase tracking-widest transition-colors duration-500 flex items-center gap-1.5 ${scanProgress >= 90 ? "text-amber-400 animate-pulse" : "text-slate-400"}`}>
-                              <span className="relative flex h-2 w-2">
-                                <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${scanProgress >= 90 ? "bg-amber-400" : "bg-emerald-400"}`}></span>
-                                <span className={`relative inline-flex rounded-full h-2 w-2 ${scanProgress >= 90 ? "bg-amber-500" : "bg-emerald-500"}`}></span>
-                              </span>
+                            <span className={`font-extrabold text-[8.5px] uppercase tracking-widest transition-colors duration-500 ${scanProgress >= 90 ? "text-amber-400 animate-pulse" : "text-slate-400"}`}>
                               {scanProgress >= 90 ? "⚡ FINAL DIAGNOSTIC STEPS" : "HARDWARE PROBE ACTIVE"}
                             </span>
                             <span className={`font-bold animate-pulse transition-colors duration-500 ${scanProgress >= 90 ? "text-amber-400" : "text-blue-400"}`}>{scanProgress}%</span>
                           </div>
-                          
-                          {/* Outer Track with smooth rounded container */}
-                          <div className="relative w-full bg-slate-900 h-2 rounded-full overflow-hidden border border-slate-800 shadow-inner">
-                            {/* Inner Animated Progress Bar */}
+                          <div className="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
                             <div 
-                              className={`h-full rounded-full transition-all duration-500 ease-out relative overflow-hidden ${
+                              className={`h-full transition-all duration-300 ${
                                 scanProgress >= 90 
-                                  ? "bg-gradient-to-r from-amber-500 via-orange-500 to-amber-400 animate-scan-pulse-amber" 
-                                  : "bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-400 animate-scan-pulse"
+                                  ? "bg-gradient-to-r from-amber-500 to-orange-400 animate-pulse shadow-[0_0_10px_rgba(245,158,11,0.5)]" 
+                                  : "bg-emerald-400"
                               }`}
                               style={{ width: `${scanProgress}%` }}
-                            >
-                              {/* Overlaying Shimmer Beam */}
-                              <div className="absolute inset-0 animate-scan-shimmer pointer-events-none"></div>
-                            </div>
+                            ></div>
                           </div>
-                          
                           <p className="text-slate-350 transition-all text-[9px] leading-snug">{scanStep}</p>
                         </div>
                       )}
@@ -2588,7 +2598,7 @@ Status: ${issueType === "battery" ? "DEGRADED" : "OPTIMAL"}`;
                         </div>
                       </div>
                       <button 
-                        onClick={fetchPOSLogs}
+                        onClick={() => fetchPOSLogs()}
                         disabled={isLoadingLogs}
                         className="flex items-center gap-2 px-3 py-1.5 bg-slate-900 border border-slate-755 hover:bg-slate-950 text-slate-200 rounded-md text-xs font-semibold tracking-wide transition-colors"
                       >

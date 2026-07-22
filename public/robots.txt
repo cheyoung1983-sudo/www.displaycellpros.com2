@@ -1,5 +1,4 @@
 User-agent: *
 Allow: /
-Disallow: /api/
 
-Sitemap: https://www.displaycellpros.com/sitemap.xml
+Sitemap: /sitemap.xml
