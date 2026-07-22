@@ -8,6 +8,15 @@ import { get } from "@vercel/edge-config";
 
 dotenv.config();
 
+// Process error safety handlers to prevent process crashing on unexpected background errors
+process.on("unhandledRejection", (reason) => {
+  console.error("[Unhandled Promise Rejection]:", reason);
+});
+
+process.on("uncaughtException", (err) => {
+  console.error("[Uncaught Exception]:", err);
+});
+
 // Initialize Express
 export const app = express();
 const PORT = 3000;
@@ -15,9 +24,15 @@ const PORT = 3000;
 // Middleware
 app.use(express.json());
 
+// Health check endpoint for Cloud Run and load balancers
+app.get(["/health", "/api/health"], (req, res) => {
+  res.status(200).json({ status: "ok", timestamp: new Date().toISOString() });
+});
+
 // Normalize API routes for serverless rewrites (e.g., when /api/ is stripped by hosting gateways)
 app.use((req, res, next) => {
   const apiPaths = [
+    "health",
     "tax-lookup",
     "generate-quote",
     "verify-b2b",
@@ -860,8 +875,8 @@ app.get("/api/rds-status", async (req, res) => {
 
   const configInfo = {
     configured,
-    host: maskString(process.env.PGHOST),
-    user: maskString(process.env.PGUSER),
+    host: maskString(process.env.SQL_HOST || process.env.PGHOST),
+    user: maskString(process.env.SQL_USER || process.env.PGUSER),
     database: process.env.PGDATABASE || "postgres",
     port: process.env.PGPORT || "5432",
     awsRegion: process.env.AWS_REGION || "us-east-1",
